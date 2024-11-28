@@ -1,0 +1,67 @@
+<script>
+// Função para calcular o valor do estacionamento
+function calcularEstacionamento(entrada, saida, valorInicial, valorPorHora) {
+    // Converte as horas de entrada e saída para minutos
+    const entradaMinutos = parseInt(entrada.split(":")[0]) * 60 + parseInt(entrada.split(":")[1]);
+    const saidaMinutos = parseInt(saida.split(":")[0]) * 60 + parseInt(saida.split(":")[1]);
+    
+    // Calcula o tempo total de permanência em minutos
+    let tempoPermanencia = saidaMinutos - entradaMinutos;
+    
+    // Aplica a tolerância de 15 minutos (não cobra por esse tempo)
+    if (tempoPermanencia <= 15) {
+      tempoPermanencia = 0; // Se o tempo de permanência for até 15 minutos, não cobra nada
+    } else {
+      tempoPermanencia -= 15; // Deduz os 15 minutos de tolerância
+    }
+  
+    // Se a permanência for maior que 3 horas, a cobrança será dividida em blocos de horas
+    let valorTotal = 0;
+  
+    if (tempoPermanencia <= 180) { // 3 horas = 180 minutos
+      valorTotal = valorInicial;
+    } else {
+      // Calcula o valor por cada hora adicional ou fração de hora
+      const horasExtras = Math.ceil((tempoPermanencia - 180) / 60);
+      valorTotal = valorInicial + (horasExtras * valorPorHora);
+    }
+  
+    // Retorna o valor total a ser cobrado
+    return valorTotal;
+  }
+  
+  // Função para gerar o ticket com informações
+  function gerarTicket(entrada, saida, valorTotal) {
+    console.log("----------- TICKET DE ESTACIONAMENTO -----------");
+    console.log("Hora de entrada: " + entrada);
+    console.log("Hora de saída: " + saida);
+    console.log("Valor a ser cobrado: R$ " + valorTotal.toFixed(2));
+    console.log("----------------------------------------------");
+  }
+  
+  // Função principal para o cálculo
+  function sistemaEstacionamento() {
+    // Valores de cobrança: R$ 5,00 para até 3 horas e R$ 2,50 por hora extra
+    const valorInicial = 10.00;   // Valor cobrado para até 3 horas
+    const valorPorHora = 3.00;   // Valor cobrado por cada hora extra ou fração
+  
+    // Solicitar ao usuário as horas de entrada e saída
+    const entrada = prompt("Digite a hora de entrada (HH:MM):");
+    const saida = prompt("Digite a hora de saída (HH:MM):");
+  
+    // Verifica se as entradas são válidas
+    if (!entrada.match(/^\d{2}:\d{2}$/) || !saida.match(/^\d{2}:\d{2}$/)) {
+      console.log("Formato de hora inválido. Por favor, insira as horas no formato HH:MM.");
+      return;
+    }
+  
+    // Calcula o valor total a ser cobrado
+    const valorTotal = calcularEstacionamento(entrada, saida, valorInicial, valorPorHora);
+  
+    // Gera o ticket
+    gerarTicket(entrada, saida, valorTotal);
+  }
+  
+  // Executa o sistema de estacionamento
+  sistemaEstacionamento();
+</script>
